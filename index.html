@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>孙骜和戴婷婷恋爱日记</title>
+  <style>
+    :root {
+      --bg-1: #fff3f0;
+      --bg-2: #ffd8d2;
+      --bg-3: #ffb6b9;
+      --card: rgba(255, 255, 255, 0.72);
+      --card-border: rgba(255, 255, 255, 0.88);
+      --text-main: #7b2232;
+      --text-sub: #9e5360;
+      --accent: #ff5f7a;
+      --accent-deep: #d93b67;
+      --shadow: 0 24px 60px rgba(182, 69, 99, 0.18);
+    }
+
+    html,
+    body {
+      height: 100%;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    html {
+      overflow-x: hidden;
+      overflow-y: hidden;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 12px;
+      overflow: hidden;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.95), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.7), transparent 30%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+      font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(8px);
+      pointer-events: none;
+    }
+
+    body::before {
+      width: 340px;
+      height: 340px;
+      top: -110px;
+      right: -80px;
+      background: rgba(255, 255, 255, 0.34);
+      animation: drift 18s linear infinite;
+    }
+
+    body::after {
+      width: 260px;
+      height: 260px;
+      bottom: -100px;
+      left: -70px;
+      background: rgba(255, 147, 167, 0.22);
+      animation: driftReverse 16s linear infinite;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 980px;
+      position: relative;
+      z-index: 1;
+      margin: 0 auto;
+      transform-origin: top center;
+    }
+
+    .hearts-layer {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .floating-heart {
+      position: absolute;
+      bottom: -14vh;
+      left: 0;
+      opacity: 0;
+      line-height: 1;
+      user-select: none;
+      text-shadow: 0 4px 10px rgba(217, 59, 103, 0.14);
+      will-change: transform, opacity;
+      animation-name: flyHeart;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    .halo {
+      position: absolute;
+      inset: -32px;
+      border-radius: 40px;
+      background:
+        conic-gradient(from 0deg, rgba(255, 255, 255, 0), rgba(255, 128, 154, 0.4), rgba(255, 255, 255, 0));
+      filter: blur(18px);
+      opacity: 0.75;
+      animation: spin 11s linear infinite;
+      z-index: 0;
+    }
+
+    .panel {
+      position: relative;
+      z-index: 1;
+      padding: 24px 20px 20px;
+      border: 1px solid var(--card-border);
+      border-radius: 32px;
+      background: var(--card);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .title {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      line-height: 1.15;
+      font-family: "STKaiti", "KaiTi", serif;
+      letter-spacing: 0.08em;
+    }
+
+    .subtitle {
+      margin: 12px 0 0;
+      font-size: 1rem;
+      color: var(--text-sub);
+    }
+
+    .heart-row {
+      display: block;
+      width: fit-content;
+      max-width: min(100%, 560px);
+      margin-top: 12px;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.68);
+      color: var(--accent-deep);
+      font-weight: 700;
+      line-height: 1.6;
+      word-break: break-word;
+      box-shadow: 0 10px 30px rgba(217, 59, 103, 0.12);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      position: relative;
+      padding: 22px 18px 20px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.92);
+      overflow: hidden;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: auto -36px -48px auto;
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 137, 162, 0.2), rgba(255, 137, 162, 0));
+    }
+
+    .card h2 {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+      font-weight: 800;
+    }
+
+    .desc {
+      margin: 0 0 8px;
+      color: var(--text-sub);
+      font-size: 0.94rem;
+      line-height: 1.6;
+      min-height: 2.4em;
+    }
+
+    .target {
+      margin: 0 0 16px;
+      font-size: 0.95rem;
+      color: var(--accent-deep);
+      font-weight: 700;
+    }
+
+    .timer {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .timer-block {
+      text-align: center;
+      padding: 12px 8px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 236, 240, 0.92));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    .timer-value {
+      display: block;
+      font-size: clamp(1.15rem, 2vw, 1.7rem);
+      font-weight: 800;
+      color: var(--accent-deep);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .timer-label {
+      display: block;
+      margin-top: 6px;
+      font-size: 0.82rem;
+      color: var(--text-sub);
+    }
+
+    .footer {
+      margin-top: 16px;
+      padding: 16px 16px;
+      text-align: center;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(255, 245, 246, 0.92), rgba(255, 230, 235, 0.85));
+      color: var(--accent-deep);
+      font-family: "STKaiti", "KaiTi", serif;
+      font-size: clamp(1.15rem, 2.2vw, 1.5rem);
+      line-height: 1.8;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    .footer strong {
+      font-size: 1.08em;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes drift {
+      0% {
+        transform: translate3d(0, 0, 0) rotate(0deg);
+      }
+      50% {
+        transform: translate3d(-22px, 18px, 0) rotate(180deg);
+      }
+      100% {
+        transform: translate3d(0, 0, 0) rotate(360deg);
+      }
+    }
+
+    @keyframes driftReverse {
+      0% {
+        transform: translate3d(0, 0, 0) rotate(0deg);
+      }
+      50% {
+        transform: translate3d(18px, -18px, 0) rotate(-180deg);
+      }
+      100% {
+        transform: translate3d(0, 0, 0) rotate(-360deg);
+      }
+    }
+
+    @keyframes flyHeart {
+      0% {
+        opacity: 0;
+        transform: translate3d(var(--drift-start, 0px), 0, 0) scale(0.8) rotate(0deg);
+      }
+      12% {
+        opacity: 0.9;
+      }
+      100% {
+        opacity: 0;
+        transform: translate3d(var(--drift-end, 0px), -125vh, 0) scale(1.22) rotate(360deg);
+      }
+    }
+
+    @media (max-width: 780px) {
+      body {
+        padding: 10px;
+      }
+
+      body::before,
+      body::after {
+        filter: blur(4px);
+      }
+
+      .halo {
+        display: none;
+      }
+
+      .panel {
+        padding: 18px 14px 16px;
+        border-radius: 28px;
+        backdrop-filter: none;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .desc {
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 460px) {
+      body {
+        padding: 8px;
+      }
+
+      .panel {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .heart-row {
+        padding: 8px 12px;
+        border-radius: 22px;
+      }
+
+      .timer {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .title {
+        letter-spacing: 0.04em;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      body::before,
+      body::after,
+      .halo,
+      .floating-heart {
+        animation: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="hearts-layer" id="hearts-layer" aria-hidden="true"></div>
+  <div class="shell">
+    <div class="halo"></div>
+    <main class="panel">
+      <section class="hero">
+        <h1 class="title">孙骜和戴婷婷恋爱日记</h1>
+        <p class="subtitle">从 2025 年 10 月 2 日开始，爱意按秒生长，心动永不停止。</p>
+        <div class="heart-row">❤ 一起走过的每一秒，都在变成更喜欢彼此的证据 ❤</div>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <h2>我们已经恋爱了</h2>
+          <p class="desc">从心动那天起，每一秒都在见证你们越来越喜欢彼此。</p>
+          <p class="target">起点：2025-10-02 00:00（北京时间）</p>
+          <div class="timer" id="love-duration">
+            <div class="timer-block"><span class="timer-value">0</span><span class="timer-label">天</span></div>
+            <div class="timer-block"><span class="timer-value">0</span><span class="timer-label">时</span></div>
+            <div class="timer-block"><span class="timer-value">0</span><span class="timer-label">分</span></div>
+            <div class="timer-block"><span class="timer-value">0</span><span class="timer-label">秒</span></div>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2 id="anniversary-title">距离下个恋爱周年还有</h2>
+          <p class="desc">认真走好今天的路，未来一定会回赠你满天星光。</p>
+          <p class="target" id="anniversary-target">计算中...</p>
+          <div class="timer" id="anniversary-countdown">
+            <div class="timer-block"><span class="timer-value">0</span><span class="timer-label">天</span></div>
+            <div class="timer-block"><span class="timer-value">0</span><span class="timer-label">时</span></div>
+            <div class="timer-block"><span class="timer-value">0</span><span class="timer-label">分</span></div>
+            <div class="timer-block"><span class="timer-value">0</span><span class="timer-label">秒</span></div>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2>距离戴婷婷生日还有</h2>
+          <p class="desc">把热爱藏进努力里，想要的美好都会一步一步靠近。</p>
+          <p class="target" id="her-birthday-target">计算中...</p>
+          <div class="timer" id="her-birthday-countdown">
+            <div class="timer-block"><span class="timer-value">0</span><span class="timer-label">天</span></div>
+            <div class="timer-block"><span class="timer-value">0</span><span class="timer-label">时</span></div>
+            <div class="timer-block"><span class="timer-value">0</span><span class="timer-label">分</span></div>
+            <div class="timer-block"><span class="timer-value">0</span><span class="timer-label">秒</span></div>
+          </div>
+        </article>
+
+        <article class="card">
+          <h2>距离孙骜农历生日还有</h2>
+          <p class="desc">愿你心里有光，脚下有路，奔向的每一天都值得庆祝。</p>
+          <p class="target" id="my-lunar-birthday-target">计算中...</p>
+          <div class="timer" id="my-lunar-birthday-countdown">
+            <div class="timer-block"><span class="timer-value">0</span><span class="timer-label">天</span></div>
+            <div class="timer-block"><span class="timer-value">0</span><span class="timer-label">时</span></div>
+            <div class="timer-block"><span class="timer-value">0</span><span class="timer-label">分</span></div>
+            <div class="timer-block"><span class="timer-value">0</span><span class="timer-label">秒</span></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="footer">
+        <strong>恋爱宣言：</strong>从 2025 年 10 月 2 日起，孙骜会一直坚定地爱着戴婷婷，今天比昨天更心动，未来的每一天都想继续和你并肩走下去。
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const SHANGHAI_OFFSET_MS = 8 * 60 * 60 * 1000;
+    const HEART_SYMBOLS = ["❤", "❤", "❤", "♥", "♡"];
+    const relationStartMs = shanghaiDateToMs(2025, 9, 2, 0, 0, 0);
+    let cachedTargetDayMs = null;
+    let cachedTargets = null;
+    const lunarFormatter = (() => {
+      try {
+        return new Intl.DateTimeFormat("zh-CN-u-ca-chinese", {
+          month: "long",
+          day: "numeric",
+          timeZone: "Asia/Shanghai"
+        });
+      } catch (error) {
+        return null;
+      }
+    })();
+
+    function pad(value) {
+      return String(value).padStart(2, "0");
+    }
+
+    function shanghaiDateToMs(year, monthIndex, day, hours = 0, minutes = 0, seconds = 0) {
+      return Date.UTC(year, monthIndex, day, hours, minutes, seconds) - SHANGHAI_OFFSET_MS;
+    }
+
+    function getShanghaiParts(ms) {
+      const shifted = new Date(ms + SHANGHAI_OFFSET_MS);
+      return {
+        year: shifted.getUTCFullYear(),
+        monthIndex: shifted.getUTCMonth(),
+        day: shifted.getUTCDate(),
+        hours: shifted.getUTCHours(),
+        minutes: shifted.getUTCMinutes(),
+        seconds: shifted.getUTCSeconds()
+      };
+    }
+
+    function getShanghaiTodayStartMs(nowMs) {
+      const today = getShanghaiParts(nowMs);
+      return shanghaiDateToMs(today.year, today.monthIndex, today.day);
+    }
+
+    function isSameShanghaiDay(leftMs, rightMs) {
+      const left = getShanghaiParts(leftMs);
+      const right = getShanghaiParts(rightMs);
+      return (
+        left.year === right.year &&
+        left.monthIndex === right.monthIndex &&
+        left.day === right.day
+      );
+    }
+
+    function getDiffParts(targetMs, nowMs, sameDayZero = false) {
+      if (sameDayZero && isSameShanghaiDay(targetMs, nowMs)) {
+        return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      }
+
+      const totalMs = Math.max(0, targetMs - nowMs);
+      const totalSeconds = Math.floor(totalMs / 1000);
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      return { days, hours, minutes, seconds };
+    }
+
+    function getElapsedParts(startMs, nowMs) {
+      const totalMs = Math.max(0, nowMs - startMs);
+      const totalSeconds = Math.floor(totalMs / 1000);
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor((totalSeconds % 86400) / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      return { days, hours, minutes, seconds };
+    }
+
+    function writeTimer(containerId, parts) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      const values = container.querySelectorAll(".timer-value");
+      values[0].textContent = parts.days;
+      values[1].textContent = pad(parts.hours);
+      values[2].textContent = pad(parts.minutes);
+      values[3].textContent = pad(parts.seconds);
+    }
+
+    function formatDate(ms) {
+      const date = getShanghaiParts(ms);
+      return `${date.year}-${pad(date.monthIndex + 1)}-${pad(date.day)}`;
+    }
+
+    function decorateHeart(heart, allowNegativeDelay = false) {
+      const size = 16 + Math.random() * 26;
+      const duration = 8 + Math.random() * 8;
+      const delay = allowNegativeDelay ? -Math.random() * duration : 0;
+      const left = Math.random() * 100;
+      const driftStart = Math.round(Math.random() * 80 - 40);
+      const driftEnd = Math.round(Math.random() * 220 - 110);
+      const opacity = (0.35 + Math.random() * 0.45).toFixed(2);
+      const rotation = `${Math.round(Math.random() * 18 - 9)}deg`;
+      const color = Math.random() > 0.35
+        ? `rgba(255, 95, 122, ${opacity})`
+        : `rgba(255, 164, 187, ${opacity})`;
+
+      heart.textContent = HEART_SYMBOLS[Math.floor(Math.random() * HEART_SYMBOLS.length)];
+      heart.style.left = `${left}vw`;
+      heart.style.fontSize = `${size}px`;
+      heart.style.color = color;
+      heart.style.animationDuration = `${duration}s`;
+      heart.style.animationDelay = `${delay}s`;
+      heart.style.transform = `rotate(${rotation})`;
+      heart.style.setProperty("--drift-start", `${driftStart}px`);
+      heart.style.setProperty("--drift-end", `${driftEnd}px`);
+    }
+
+    function buildHeartField() {
+      const layer = document.getElementById("hearts-layer");
+      if (!layer) return;
+
+      const total = window.innerWidth <= 520 ? 10 : 16;
+      layer.innerHTML = "";
+
+      for (let index = 0; index < total; index += 1) {
+        const heart = document.createElement("span");
+        heart.className = "floating-heart";
+        decorateHeart(heart, true);
+        heart.onanimationiteration = () => decorateHeart(heart);
+        layer.appendChild(heart);
+      }
+    }
+
+    function scrollPageTop() {
+      if ("scrollRestoration" in history) {
+        history.scrollRestoration = "manual";
+      }
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }
+
+    function fitShellToViewport() {
+      const shell = document.querySelector(".shell");
+      if (!shell) return;
+
+      shell.style.transform = "scale(1)";
+
+      const viewport = window.visualViewport;
+      const viewportWidth = viewport ? viewport.width : window.innerWidth;
+      const viewportHeight = viewport ? viewport.height : window.innerHeight;
+      const bodyStyle = getComputedStyle(document.body);
+      const horizontalPadding = parseFloat(bodyStyle.paddingLeft) + parseFloat(bodyStyle.paddingRight);
+      const verticalPadding = parseFloat(bodyStyle.paddingTop) + parseFloat(bodyStyle.paddingBottom);
+      const availableWidth = Math.max(0, viewportWidth - horizontalPadding);
+      const availableHeight = Math.max(0, viewportHeight - verticalPadding);
+      const naturalWidth = shell.offsetWidth;
+      const naturalHeight = shell.offsetHeight;
+      const widthScale = naturalWidth > 0 ? availableWidth / naturalWidth : 1;
+      const heightScale = naturalHeight > 0 ? availableHeight / naturalHeight : 1;
+      const scale = Math.min(widthScale, heightScale, 1);
+
+      shell.style.transform = `scale(${scale})`;
+    }
+
+    let fitShellRaf = 0;
+    function scheduleFitShell() {
+      cancelAnimationFrame(fitShellRaf);
+      fitShellRaf = requestAnimationFrame(fitShellToViewport);
+    }
+
+    function getNextAnniversary(nowMs) {
+      const now = getShanghaiParts(nowMs);
+      let years = now.year - 2025;
+      years = Math.max(1, years);
+
+      let targetMs = shanghaiDateToMs(2025 + years, 9, 2);
+
+      if (targetMs < getShanghaiTodayStartMs(nowMs)) {
+        years += 1;
+        targetMs = shanghaiDateToMs(2025 + years, 9, 2);
+      }
+
+      return { targetMs, years };
+    }
+
+    function getNextSolarBirthday(nowMs, monthIndex, day) {
+      const now = getShanghaiParts(nowMs);
+      let targetMs = shanghaiDateToMs(now.year, monthIndex, day);
+      if (targetMs < getShanghaiTodayStartMs(nowMs)) {
+        targetMs = shanghaiDateToMs(now.year + 1, monthIndex, day);
+      }
+      return targetMs;
+    }
+
+    function getChineseMonthDay(ms) {
+      if (!lunarFormatter) {
+        return null;
+      }
+
+      const parts = lunarFormatter.formatToParts(new Date(ms));
+      const month = parts.find((part) => part.type === "month")?.value;
+      const day = parts.find((part) => part.type === "day")?.value;
+      return month && day ? { month, day } : null;
+    }
+
+    function getNextLunarBirthday(nowMs, monthText, dayText) {
+      if (!lunarFormatter) {
+        return null;
+      }
+
+      const baseMs = getShanghaiTodayStartMs(nowMs);
+
+      // 在未来三年内逐天查找匹配的农历月日，避免手写农历换算库。
+      for (let offset = 0; offset <= 1100; offset += 1) {
+        const candidateMs = baseMs + offset * 86400000;
+        const lunar = getChineseMonthDay(candidateMs);
+        if (!lunar) continue;
+        if (lunar.month === monthText && lunar.day === dayText) {
+          return candidateMs;
+        }
+      }
+
+      return null;
+    }
+
+    function getCachedTargets(nowMs) {
+      const todayStartMs = getShanghaiTodayStartMs(nowMs);
+      if (cachedTargetDayMs === todayStartMs && cachedTargets) {
+        return cachedTargets;
+      }
+
+      cachedTargetDayMs = todayStartMs;
+      cachedTargets = {
+        anniversary: getNextAnniversary(nowMs),
+        herBirthday: getNextSolarBirthday(nowMs, 0, 16),
+        myLunarBirthday: getNextLunarBirthday(nowMs, "四月", "16")
+      };
+      return cachedTargets;
+    }
+
+    function refresh() {
+      const nowMs = Date.now();
+      const targets = getCachedTargets(nowMs);
+
+      writeTimer("love-duration", getElapsedParts(relationStartMs, nowMs));
+
+      const anniversary = targets.anniversary;
+      document.getElementById("anniversary-title").textContent = isSameShanghaiDay(anniversary.targetMs, nowMs)
+        ? `今天是恋爱 ${anniversary.years} 周年`
+        : `距离恋爱 ${anniversary.years} 周年还有`;
+      document.getElementById("anniversary-target").textContent = isSameShanghaiDay(anniversary.targetMs, nowMs)
+        ? `今天就是你们的 ${anniversary.years} 周年纪念日`
+        : `目标日：${formatDate(anniversary.targetMs)} (${anniversary.years} 周年)`;
+      writeTimer(
+        "anniversary-countdown",
+        getDiffParts(anniversary.targetMs, nowMs, true)
+      );
+
+      const herBirthday = targets.herBirthday;
+      document.getElementById("her-birthday-target").textContent = isSameShanghaiDay(herBirthday, nowMs)
+        ? "今天就是戴婷婷的生日"
+        : `目标日：${formatDate(herBirthday)} 00:00（公历 1 月 16 日，北京时间）`;
+      writeTimer(
+        "her-birthday-countdown",
+        getDiffParts(herBirthday, nowMs, true)
+      );
+
+      const myLunarBirthday = targets.myLunarBirthday;
+      const lunarTarget = document.getElementById("my-lunar-birthday-target");
+      if (!myLunarBirthday) {
+        lunarTarget.textContent = "只要一直向前，平凡的日子也会开出温柔的花";
+        writeTimer("my-lunar-birthday-countdown", { days: 0, hours: 0, minutes: 0, seconds: 0 });
+        return;
+      }
+
+      lunarTarget.textContent = isSameShanghaiDay(myLunarBirthday, nowMs)
+        ? "今天就是孙骜的农历生日"
+        : `目标日：${formatDate(myLunarBirthday)} 00:00（农历四月十六，北京时间）`;
+      writeTimer(
+        "my-lunar-birthday-countdown",
+        getDiffParts(myLunarBirthday, nowMs, true)
+      );
+    }
+
+    scrollPageTop();
+    buildHeartField();
+    refresh();
+    scheduleFitShell();
+    setInterval(refresh, 1000);
+    window.addEventListener("load", scrollPageTop);
+    window.addEventListener("pageshow", scrollPageTop);
+    window.addEventListener("load", scheduleFitShell);
+    window.addEventListener("pageshow", scheduleFitShell);
+    window.addEventListener("resize", () => {
+      buildHeartField();
+      scheduleFitShell();
+    });
+    window.visualViewport?.addEventListener("resize", scheduleFitShell);
+    document.fonts?.ready.then(scheduleFitShell);
+  </script>
+</body>
+</html>
